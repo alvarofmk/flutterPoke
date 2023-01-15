@@ -55,20 +55,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   String img = "";
-  late Future<List<PokemonDetails>> pokemon;
+  late Future<PokemonResponse> pokemon;
 
-  Future<List<PokemonDetails>> getPokemon() async {
-    List<PokemonDetails> result = [];
+  Future<PokemonResponse> getPokemon() async {
     final response =
         await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon/'));
     if (response.statusCode == 200) {
-      PokemonResponse.fromJson(jsonDecode(response.body))
-          .results!
-          .forEach((element) async {
-        final current = await http.get(Uri.parse(element.url!));
-        result.add(PokemonDetails.fromJson(jsonDecode(current.body)));
-      });
-      return result;
+      return PokemonResponse.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load pokemon');
     }
@@ -93,21 +86,22 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
-          child: FutureBuilder<List<PokemonDetails>>(
+          child: FutureBuilder<PokemonResponse>(
         future: pokemon,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List<PokemonDetails> response = snapshot.data!;
+            PokemonResponse response = snapshot.data!;
             return GridView.count(
               crossAxisCount: 2,
-              children: List.generate(response.length, (index) {
+              children: List.generate(response.results!.length, (index) {
                 return Card(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('${response[index].name}',
+                      Text('${response.results![index].name}',
                           style: TextStyle(fontWeight: FontWeight.bold)),
-                      Image.network(response[index].sprites!.frontDefault!),
+                      Text('${response.results![index].url}',
+                          style: TextStyle(color: Colors.grey)),
                     ],
                   ),
                 );
