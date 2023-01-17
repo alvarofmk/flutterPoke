@@ -135,6 +135,7 @@ class details extends StatelessWidget {
             return Scaffold(
                 appBar: AppBar(
                   title: Text(response.name!),
+                  elevation: 0,
                 ),
                 body: Center(
                     child: Column(
@@ -142,10 +143,17 @@ class details extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      color: Colors.grey,
+                      color: Colors.red,
                       child: Row(
                         children: [
-                          Image.network(response.sprites!.frontDefault!),
+                          SizedBox(
+                            width: 200,
+                            height: 200,
+                            child: Image.network(
+                              response.sprites!.frontDefault!,
+                              width: 140,
+                            ),
+                          ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -167,7 +175,7 @@ class details extends StatelessWidget {
                           )
                         ],
                       ),
-                    ),
+                    )
                   ],
                 )));
           } else if (snapshot.hasError) {
